@@ -1,10 +1,8 @@
 name: C/C++ CI
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -19,4 +17,11 @@ jobs:
       with:
         release: '9-2019-q4' # The arm-none-eabi-gcc release to use.
     - run: make
-
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: @(*.dfu|*.bin)
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
